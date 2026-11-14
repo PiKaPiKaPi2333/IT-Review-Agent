@@ -1,0 +1,36 @@
+# 黄金评估集示例（结构演示，内容需按实际知识库替换）
+#
+# 字段：
+#   question         审计方提问
+#   ground_truth     参考答案（RAGAS 的 context_recall / answer_relevancy 用）
+#   expected_doc_ids 期望命中的文档 ID（用于 context_hit_rate）
+#   audit_ctx_id     可选的审计项目 ID（检索时按项目隔离）
+#   tags             分类标签，便于分组统计
+name: sample-audit-qa
+description: 采购/费用/资产管理三类问题的冒烟评估集
+
+items:
+  - question: 采购金额超过一百万元的，需要谁审批？
+    ground_truth: 采购金额超过一百万元（含）的，须报总经理办公会审批。
+    expected_doc_ids: [PLACEHOLDER_DOC_ID_1]
+    tags: [factual, procurement]
+
+  - question: 差旅费报销的标准是多少？
+    ground_truth: 依据差旅费管理办法，按职级分档，具体标准见该办法附表。
+    expected_doc_ids: [PLACEHOLDER_DOC_ID_2]
+    tags: [factual, expense]
+
+  - question: 固定资产盘点发现盘亏时应如何处理？
+    ground_truth: 需查明原因，形成盘点报告，按审批权限报批后调整账务，涉及责任的追究责任。
+    expected_doc_ids: [PLACEHOLDER_DOC_ID_3]
+    tags: [analytical, asset]
+
+  - question: 该单位 2023 年度内部控制存在哪些主要缺陷？
+    ground_truth: 需综合内部控制评价报告与审计报告，逐项列示缺陷及整改情况。
+    expected_doc_ids: [PLACEHOLDER_DOC_ID_4]
+    tags: [analytical, internal-control]
+
+  - question: 合同付款条款中，预付款比例上限是多少？
+    ground_truth: 预付款比例原则上不超过合同金额的 30%。
+    expected_doc_ids: [PLACEHOLDER_DOC_ID_5]
+    tags: [factual, contract]

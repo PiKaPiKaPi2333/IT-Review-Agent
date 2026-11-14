@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.pytest_tmp/
+.pytmp/
+pytest-*/
+.ruff_cache/
+
+# 密钥与本地环境（请勿提交真实密钥）
+.env
+.env.*
+plan.txt
+
+# 运行数据：上传文件、解析结果、评估产物
+data/
+volumes/
+*.pckl
+.langgraph_api/
+*.log
+report.json
+eval_report*.json
+*.samples.json
+
+# 前端
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+
+# IDE / 系统
+.idea/
+.DS_Store

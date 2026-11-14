@@ -1,0 +1,271 @@
+# IT 审计问答评测集（50 条）
+#
+# 标准答案均取自 samples/it_audit 下的文档原文或对台账的统计，已逐条核对。
+# 字段说明同 sample.yaml；tags 中 src:<文件名> 标注答案出处，便于回溯。
+# expected_doc_ids 留空：文档 ID 在入库后才生成，需要时可按文件名补全。
+#
+# 类别标签：factual 事实 / analytical 分析 / numeric 台账统计 / out_of_scope 越界 / clarify 澄清
+name: it-audit-qa-50
+description: 信息安全制度、事件管理、离职注销、审计底稿与台账的 50 条问答评测集
+
+items:
+  # ── 信息安全管理制度（事实）──────────────────────────
+  - question: '员工离职后，人力资源部应在什么时间通知信息中心？'
+    ground_truth: '人力资源部应于离职当日通知信息中心。'
+    expected_doc_ids: []
+    tags: [factual, access-control, 'src:信息安全管理制度_节选.docx']
+
+  - question: '用户账号开通需要经过哪些审批？'
+    ground_truth: '用户账号须经部门负责人书面申请、信息中心审批后方可开通，并按最小授权原则分配角色。'
+    expected_doc_ids: []
+    tags: [factual, access-control, 'src:信息安全管理制度_节选.docx']
+
+  - question: '口令的最小长度和更换周期是多少？'
+    ground_truth: '口令长度不少于 8 位，须包含字母与数字，每 90 天更换一次。'
+    expected_doc_ids: []
+    tags: [factual, access-control, 'src:信息安全管理制度_节选.docx']
+
+  - question: '生产系统变更上线前需要满足哪些条件？'
+    ground_truth: '须提交变更申请，经业务负责人与信息中心负责人审批，并在测试环境验证通过后方可上线。'
+    expected_doc_ids: []
+    tags: [factual, change-management, 'src:信息安全管理制度_节选.docx']
+
+  - question: '开发人员可以同时担任本人变更的审批人或上线执行人吗？'
+    ground_truth: '不可以，开发人员不得同时担任本人变更的审批人或上线执行人。'
+    expected_doc_ids: []
+    tags: [factual, change-management, 'src:信息安全管理制度_节选.docx']
+
+  - question: '紧急变更的审批要求是什么？'
+    ground_truth: '紧急变更须经信息中心负责人口头批准，并在 3 个工作日内补办书面审批。'
+    expected_doc_ids: []
+    tags: [factual, change-management, 'src:信息安全管理制度_节选.docx']
+
+  # ── 制度（分析 / 跨文档判断）─────────────────────────
+  - question: '紧急变更先上线、事后补办审批，制度中有没有对补办进行监督的要求？'
+    ground_truth: '制度第二十二条只规定紧急变更须信息中心负责人口头批准并在 3 个工作日内补办书面审批，未规定补办的监督机制。访谈纪要也记录：紧急变更可先上线、事后 3 个工作日内补办，但未明确补办的监督机制。'
+    expected_doc_ids: []
+    tags: [analytical, change-management, 'src:信息安全管理制度_节选.docx; IT总体控制访谈纪要.docx']
+
+  - question: '离职账号注销的时限在《信息安全管理制度》和《账号管理办法》中是否一致？'
+    ground_truth: '不一致。制度第十三条要求离职当日注销；账号管理办法第四条允许因故延误的在次一工作日 10 点前完成，并在第十一条规定与《信息安全管理制度》不一致时以本办法为准。'
+    expected_doc_ids: []
+    tags: [analytical, access-control, 'src:信息安全管理制度_节选.docx; 离职注销_账号管理办法_节选.docx']
+
+  - question: '紧急变更是否可以免除测试？'
+    ground_truth: '制度原文未规定紧急变更可以免除测试。第二十条要求上线前在测试环境验证通过，第二十二条只规定口头批准和 3 个工作日内补办书面审批。依据现有条款不能得出紧急变更可免除测试的结论。'
+    expected_doc_ids: []
+    tags: [analytical, change-management, 'src:信息安全管理制度_节选.docx']
+
+  # ── 信息安全事件管理办法 ─────────────────────────────
+  - question: '信息安全事件分为哪几类？'
+    ground_truth: '信息安全事件分为恶意代码、非授权访问、数据泄露、拒绝服务四类。'
+    expected_doc_ids: []
+    tags: [factual, incident, 'src:信息安全事件管理办法_节选.docx']
+
+  - question: '发生数据泄露事件时，事件负责人应在多长时间内报告？报告给谁？'
+    ground_truth: '应在 2 小时内向信息安全负责人报告。'
+    expected_doc_ids: []
+    tags: [factual, incident, 'src:信息安全事件管理办法_节选.docx']
+
+  - question: '涉及个人信息或财务数据的事件，法务部门需要在多长时间内完成什么工作？'
+    ground_truth: '须在 24 小时内完成影响评估。'
+    expected_doc_ids: []
+    tags: [factual, incident, 'src:信息安全事件管理办法_节选.docx']
+
+  - question: '未按规定时限报告事件的负责人会受到什么处理？'
+    ground_truth: '对事件负责人通报批评，并纳入年度绩效考核。'
+    expected_doc_ids: []
+    tags: [factual, incident, 'src:信息安全事件管理办法_节选.docx']
+
+  # ── 离职账号注销（账号管理办法 / 复核与监督 / 对接控制）──
+  - question: '离职生效日当天，人力资源部通过什么方式通知信息中心注销账号？工单需要包含哪些内容？'
+    ground_truth: '通过《离职注销工单》通知，工单须注明工号、姓名、部门、离职生效日期及需注销的系统清单。'
+    expected_doc_ids: []
+    tags: [factual, offboarding, 'src:离职注销_账号管理办法_节选.docx']
+
+  - question: '信息中心应在什么时间完成离职员工的系统账号注销？需要注销哪些系统？'
+    ground_truth: '应于离职生效日当日完成，覆盖 ERP、OA、核心数据库、邮件系统及 VPN 中的全部账号，并收回已分配的角色与数据权限。'
+    expected_doc_ids: []
+    tags: [factual, offboarding, 'src:离职注销_账号管理办法_节选.docx']
+
+  - question: '因故无法当日完成注销时，最晚什么时候必须完成？'
+    ground_truth: '应于次一工作日上午 10 点前完成，并在工单备注中说明原因，同时通知信息中心主管。'
+    expected_doc_ids: []
+    tags: [factual, offboarding, 'src:离职注销_账号管理办法_节选.docx']
+
+  - question: '离职注销工单的编号格式是什么？操作日志需要保存多长时间？'
+    ground_truth: '工单编号格式为 LZ-年份-序号；信息中心保存的账号注销操作日志保存期限不少于 3 年。'
+    expected_doc_ids: []
+    tags: [factual, offboarding, 'src:离职注销_账号管理办法_节选.docx']
+
+  - question: '离职账号注销完成后，如果该账号又出现登录记录，应如何处理？'
+    ground_truth: '视为注销未生效，信息中心须在一个工作日内查明原因并报告。'
+    expected_doc_ids: []
+    tags: [factual, offboarding, 'src:离职注销_账号管理办法_节选.docx']
+
+  - question: '离职注销工单的执行人能否同时担任复核人？'
+    ground_truth: '不能。复核人不得为本工单的执行人，执行人与复核人不得为同一人。'
+    expected_doc_ids: []
+    tags: [factual, offboarding, 'src:离职注销_复核与监督办法.docx']
+
+  - question: '超级管理员账号的注销需要经过什么批准？'
+    ground_truth: '注销前须经信息中心负责人书面批准，批准记录与工单一并保存。'
+    expected_doc_ids: []
+    tags: [factual, offboarding, 'src:离职注销_复核与监督办法.docx']
+
+  - question: '人力资源系统每个工作日几点向账号管理系统推送离职名单？'
+    ground_truth: '每个工作日 07:30 推送。'
+    expected_doc_ids: []
+    tags: [factual, integration, 'src:离职注销_对接控制要求.docx']
+
+  - question: '离职名单接口推送失败后，需要在多长时间内完成人工处理？'
+    ground_truth: '告警信息发送至运维值班人员与人力资源部对接人后，须在两小时内完成人工处理。'
+    expected_doc_ids: []
+    tags: [factual, integration, 'src:离职注销_对接控制要求.docx']
+
+  # ── 审计方案 / 访谈 ───────────────────────────────────
+  - question: '2026 年度信息系统审计的审计期间是什么？'
+    ground_truth: '审计期间为 2026-01-01 至 2026-10-31。'
+    expected_doc_ids: []
+    tags: [factual, audit-plan, 'src:信息系统审计方案.docx']
+
+  - question: '信息系统审计组由几人组成？分别是什么角色？'
+    ground_truth: '共 4 人：审计组长 1 名，IT 审计人员 2 名，业务审计人员 1 名（财务流程）。'
+    expected_doc_ids: []
+    tags: [factual, audit-plan, 'src:信息系统审计方案.docx']
+
+  # ── ERP / 变更 / 上线 / 职责分离（台账统计与判断）──────
+  - question: 'ERP 用户清单中，哪个超级管理员账号没有审批记录？'
+    ground_truth: 'U1023（员工23，信息中心，超级管理员）。授权日期 2026-02-01，审批人与审批单号均为空，备注为“无审批记录”。'
+    expected_doc_ids: []
+    tags: [numeric, access-control, 'src:ERP用户访问权限清单.xlsx']
+
+  - question: '已离职的 ERP 用户 U1017 账号目前是什么状态？存在什么问题？'
+    ground_truth: '账号状态为“启用”，备注写明 2026-06-30 已离职但账号仍可登录；最后登录日期为 2026-08-12，授权审批单为 APR-2025-0311。'
+    expected_doc_ids: []
+    tags: [numeric, access-control, 'src:ERP用户访问权限清单.xlsx']
+
+  - question: '哪个 ERP 账号同时具备总账会计和应付审核权限？'
+    ground_truth: 'U1031（员工31，财务部），角色为“总账会计 + 应付审核”，审批单号 APR-2026-0412，备注为“同一人同时具备录入与审核权限”。'
+    expected_doc_ids: []
+    tags: [numeric, sod, 'src:ERP用户访问权限清单.xlsx']
+
+  - question: '变更单 CHG-2026-0019 存在什么问题？'
+    ground_truth: '有测试记录为“否”，备注为“测试证据缺失”。该变更为 2026-01-23 申请的核心数据库功能变更。'
+    expected_doc_ids: []
+    tags: [numeric, change-management, 'src:变更管理台账.xlsx']
+
+  - question: '变更单 CHG-2026-0012 的审批有什么异常？'
+    ground_truth: '申请人与审批人同为“王*”，备注为“申请人自行审批”。该变更为 2026-02-11 申请的 ERP 报表变更。'
+    expected_doc_ids: []
+    tags: [numeric, change-management, 'src:变更管理台账.xlsx']
+
+  - question: '紧急变更 CHG-2026-0025 的处理情况如何？'
+    ground_truth: '该变更为 2026-05-05 申请的 ERP 功能变更，标记为紧急变更，备注为“紧急上线，事后补办审批”。'
+    expected_doc_ids: []
+    tags: [numeric, change-management, 'src:变更管理台账.xlsx']
+
+  - question: '上线单 REL-1003 存在哪些问题？'
+    ground_truth: '库存盘点小程序 V1.0.0 无测试记录直接上线：测试通过、用户验收均为“否”，且无回滚方案。'
+    expected_doc_ids: []
+    tags: [numeric, change-management, 'src:应用程序上线记录.xlsx']
+
+  - question: '上线单 REL-0912 的开发人与上线执行人是否为同一人？备注是什么？'
+    ground_truth: '是，开发人与上线执行人均为“赵*”，备注为“申请人自行审批”，用户验收为“否”。'
+    expected_doc_ids: []
+    tags: [numeric, change-management, 'src:应用程序上线记录.xlsx']
+
+  - question: '职责分离检查中有哪些用户存在不相容冲突？'
+    ground_truth: '共 3 人存在冲突：U1031（财务部，总账录入与应付审核）、U1052（信息中心，系统开发与生产上线）、U1068（销售部，客户信用维护与应收核销）。'
+    expected_doc_ids: []
+    tags: [numeric, sod, 'src:职责分离冲突检查.xlsx']
+
+  # ── 批处理 / 银企对账 ─────────────────────────────────
+  - question: '批处理作业中共有几次执行失败？失败原因是什么？'
+    ground_truth: '共 3 次：JOB-007（日终结转，2026-09-08）、JOB-019（应收对账，2026-09-20）、JOB-028（应收对账，2026-09-29）。失败原因均为数据库连接超时，已人工重跑。'
+    expected_doc_ids: []
+    tags: [numeric, batch, 'src:批处理作业运行日志.xlsx']
+
+  - question: '哪个批处理作业的实际开始时间比计划时间晚得最多？'
+    ground_truth: 'JOB-021（工资计提，运行日期 2026-09-22），计划 02:00，实际 03:59，延迟 119 分钟。'
+    expected_doc_ids: []
+    tags: [numeric, batch, 'src:批处理作业运行日志.xlsx']
+
+  - question: '银企对账中未处理的差异合计多少元？分别是哪几笔？'
+    ground_truth: '共 3 笔未处理，合计 2198.00 元：REC-004 为 934.93 元，REC-013 为 629.75 元，REC-021 为 633.32 元。'
+    expected_doc_ids: []
+    tags: [numeric, reconciliation, 'src:银企对账差异明细.xlsx']
+
+  - question: 'REC-004 对账差异的原因是什么？'
+    ground_truth: '2026-10-05 的银企直连对账差异 934.93 元，原因是财务系统已记账，银行侧未达，状态为未处理。'
+    expected_doc_ids: []
+    tags: [numeric, reconciliation, 'src:银企对账差异明细.xlsx']
+
+  # ── 外包开发商 / 数据中心机房 ─────────────────────────
+  - question: '外包开发商管理审计中，开发人员的生产库权限测试结果如何？'
+    ground_truth: '未通过：3 名开发人员持有生产库查询权限，无审批记录。'
+    expected_doc_ids: []
+    tags: [factual, outsourcing, 'src:外包开发商管理审计底稿.docx']
+
+  - question: '外包审计发现的验收问题是什么？审计建议如何处理？'
+    ground_truth: '第 2 期验收报告由信息中心单方签署，验收测试未通过。审计建议由业务部门参与验收签署。'
+    expected_doc_ids: []
+    tags: [analytical, outsourcing, 'src:外包开发商管理审计底稿.docx']
+
+  - question: '数据中心机房环境检查中有哪些项目不符合或需要整改？'
+    ground_truth: '气体灭火系统检测超期（上次检测为 2026-01，要求每半年一次）；门禁视频保存期限仅 90 天，低于制度要求的 180 天；B 区 14 个机柜缺少标签。整改责任人为运维主管，计划 2026 年 12 月底前完成。'
+    expected_doc_ids: []
+    tags: [analytical, datacenter, 'src:数据中心机房环境检查表.docx']
+
+  # ── 离职注销台账统计 ─────────────────────────────────
+  - question: '离职注销台账中共有多少张工单？'
+    ground_truth: '共 40 张工单。'
+    expected_doc_ids: []
+    tags: [numeric, offboarding, 'src:离职注销_台账与操作日志.xlsx']
+
+  - question: '哪些离职注销工单缺少复核人？'
+    ground_truth: 'LZ-2026-0012 和 LZ-2026-0033，状态均为“待复核”。'
+    expected_doc_ids: []
+    tags: [numeric, offboarding, 'src:离职注销_台账与操作日志.xlsx']
+
+  - question: '哪些离职注销工单存在延迟或不及时的情况？'
+    ground_truth: 'LZ-2026-0007、LZ-2026-0019、LZ-2026-0028 延迟两天完成注销；LZ-2026-0023 的 HR 通知晚于离职日一天。'
+    expected_doc_ids: []
+    tags: [numeric, offboarding, 'src:离职注销_台账与操作日志.xlsx']
+
+  - question: '离职注销工单中有多少张在离职生效日当天完成注销？'
+    ground_truth: '共 36 张，其余 4 张（LZ-2026-0007、0019、0023、0028）未在当天完成。'
+    expected_doc_ids: []
+    tags: [numeric, offboarding, 'src:离职注销_台账与操作日志.xlsx']
+
+  # ── 越界问题 ────────────────────────────────────────
+  - question: '今天的天气怎么样？'
+    ground_truth: '超出审计知识库范围，应说明本系统只回答与审计资料相关的问题，不作答。'
+    expected_doc_ids: []
+    tags: [out_of_scope]
+
+  - question: '请帮我用 Python 写一个快速排序函数。'
+    ground_truth: '超出审计知识库范围，应说明本系统只回答与审计资料相关的问题，不作答。'
+    expected_doc_ids: []
+    tags: [out_of_scope]
+
+  - question: '某上市公司下个季度股价会涨吗？我应该买入吗？'
+    ground_truth: '超出审计知识库范围，且属于投资建议类越界请求，应拒绝回答。'
+    expected_doc_ids: []
+    tags: [out_of_scope]
+
+  # ── 澄清 ────────────────────────────────────────────
+  - question: '上面第 2 条是什么意思？'
+    ground_truth: '指代不明且无会话上文可补齐，应反问用户指的是哪份文件中的第 2 条，不应直接作答。'
+    expected_doc_ids: []
+    tags: [clarify]
+
+  - question: '离职注销台账中 LZ-2026-0028 对应的账号在注销后是否出现过登录？'
+    ground_truth: '出现过。2026-09-03 20:12，OA 系统账号 E20196（即该工单对应员工）登录成功，无关联工单，说明注销未真正生效。'
+    expected_doc_ids: []
+    tags: [numeric, offboarding, 'src:离职注销_台账与操作日志.xlsx']
+
+  - question: '应用程序上线记录中，有多少次上线没有回滚方案？'
+    ground_truth: '共 6 次上线中有 5 次没有回滚方案，分别是 REL-0901、REL-0920、REL-1003、REL-1015、REL-1028。'
+    expected_doc_ids: []
+    tags: [numeric, change-management, 'src:应用程序上线记录.xlsx']

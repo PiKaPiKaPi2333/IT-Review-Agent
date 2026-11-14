@@ -1,0 +1,151 @@
+# 全栈一键启动：postgres + etcd + minio + milvus + attu + api
+#
+# 用法：
+#   新建 .env，至少填写 SILICONFLOW_API_KEY（其余配置项见 app/infra/config.py）
+#   docker compose up -d
+#
+# 访问：
+#   Attu（Milvus 管理界面）：http://localhost:8080
+#   API 文档：http://localhost:8000/docs
+# 注意：.env 中 DATABASE_URL / MILVUS_URI 默认面向"宿主机直连"（localhost）。
+#       api 容器内部通过 environment 覆盖为容器网络地址。
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: reviewagent-postgres
+    environment:
+      POSTGRES_USER: review
+      POSTGRES_PASSWORD: review
+      POSTGRES_DB: review
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U review -d review"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.16
+    container_name: reviewagent-etcd
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    command: >-
+      etcd -advertise-client-urls=http://127.0.0.1:2379
+      -listen-client-urls=http://0.0.0.0:2379
+      --data-dir /etcd
+    volumes:
+      - etcddata:/etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  minio:
+    # 说明：官方 minio/minio 与 quay.io/minio/minio 在国内镜像源常被 403/401 拦，
+    # 这里用 Bitnami 的 legacy 构建（同为 MinIO 2025.5.24，api 兼容）。
+    # 变量名与官方镜像一致：MINIO_ROOT_USER / MINIO_ROOT_PASSWORD。
+    image: bitnamilegacy/minio:latest
+    container_name: reviewagent-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      # Bitnami 镜像的数据目录
+      MINIO_DATA_DIR: /bitnami/minio/data
+      MINIO_SKIP_CLIENT: "yes"
+    command: minio server /bitnami/minio/data --address ":9000" --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/bitnami/minio/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  milvus:
+    image: milvusdb/milvus:v2.5.4
+    container_name: reviewagent-milvus
+    command: ["milvus", "run", "standalone"]
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+      MINIO_ACCESS_KEY_ID: minioadmin
+      MINIO_SECRET_ACCESS_KEY: minioadmin
+      # BM25 Function（全文检索）需要 2.5+ 且开启中文分词
+      COMMON_STORAGETYPE: local
+    volumes:
+      - milvusdata:/var/lib/milvus
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    depends_on:
+      etcd:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+    restart: unless-stopped
+
+  attu:
+    # Milvus 可视化管理界面，版本与 milvus 镜像保持一致
+    image: zilliz/attu:v2.5.4
+    container_name: reviewagent-attu
+    environment:
+      MILVUS_URL: milvus:19530
+    ports:
+      - "8080:3000"
+    depends_on:
+      milvus:
+        condition: service_healthy
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: reviewagent-api
+    env_file:
+      - .env
+    environment:
+      # 容器内网络地址覆盖
+      DATABASE_URL: postgresql+asyncpg://review:review@postgres:5432/review
+      MILVUS_URI: http://milvus:19530
+      UPLOAD_DIR: /data/uploads
+      MINERU_OUTPUT_DIR: /data/parsed
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      milvus:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  etcddata:
+  miniodata:
+  milvusdata:
